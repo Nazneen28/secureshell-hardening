@@ -1,0 +1,8 @@
+Port 22
+PermitRootLogin no
+PasswordAuthentication no
+PermitEmptyPasswords no
+X11Forwarding no
+MaxAuthTries 4
+ClientAliveInterval 300
+AllowTcpForwarding no

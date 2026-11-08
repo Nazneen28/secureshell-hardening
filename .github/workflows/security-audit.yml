@@ -1,0 +1,40 @@
+name: Security Audit
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  security-audit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+
+      - name: Run SSH security audit
+        run: |
+          chmod +x harden.sh
+          ./harden.sh sample_sshd_config
+
+      - name: Display security report
+        run: |
+          cat report.json
+
+      - name: Enforce security threshold
+        run: |
+          SCORE=$(jq '.percentage' report.json)
+
+          echo "Security score: ${SCORE}%"
+
+          if [ "$SCORE" -lt 70 ]; then
+            echo "Security score below 70% - failing build."
+            exit 1
+          fi
+
+          echo "Security gate passed."
